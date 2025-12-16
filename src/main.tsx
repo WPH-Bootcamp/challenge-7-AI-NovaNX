@@ -11,12 +11,24 @@ import { setupIndustryDrawer } from "./components/ui/scripts/industryDrawer.ts";
 
 // Initialize page scripts
 initThemeFromURLOrStorage();
+// attach once now (in case toggles already exist) and again after React renders
 setupThemeToggles();
 setupTestimonials();
 setupIndustryDrawer();
 
-createRoot(document.getElementById("app")!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
   </StrictMode>
 );
+
+// Ensure toggles bind after React mounts header components
+if (typeof requestAnimationFrame === "function") {
+  requestAnimationFrame(() => setupThemeToggles());
+  requestAnimationFrame(() => setupIndustryDrawer());
+  requestAnimationFrame(() => setupTestimonials());
+} else {
+  setTimeout(() => setupThemeToggles(), 0);
+  setTimeout(() => setupIndustryDrawer(), 0);
+  setTimeout(() => setupTestimonials(), 0);
+}

@@ -123,11 +123,13 @@ Check this module: [click this](https://orchid-clematis-3e4.notion.site/Panduan-
 
 🎉 Congratulations on working on this assignment! Utilize the _playground_ feature in Figma to help you understand how the design should look on various devices. Keep experimenting and don't hesitate to look for references if you encounter difficulties. You can definitely produce great work! 🚀 Keep up the spirit, cheers! 🎈
 
+##################################################################################################
 
 #Additional File and folder#
-1)file menu.html file is used as the menu page (navigation bar) on the default mobile view
 
-2) Adding Folder /src/ui/scripts
+1) Adding Folder /src/ui/scripts
 Used to store files: industryDrawer.ts, testimonials.ts, and theme.ts for additional scripts on web pages.
 
-3)
+2) Evaluation and API simulation of sending message in "Ready to Start? Let’s Talk." Section
+   a) Try sending a message with all the details filled in: name, email, and message. You'll receive a message respond in the dialog box: "Message received!"
+   b) Try sending a message with the entire email address: failed@yahoo.com. You will then receive a message in the message box: "Oops! Something went wrong."

@@ -2,6 +2,7 @@ type ThemeMode = "light" | "dark";
 
 const KEY = "pref-theme";
 const root = document.documentElement;
+let observerStarted = false;
 
 export function applyTheme(mode: ThemeMode): void {
   if (mode === "light") root.classList.add("theme-light");
@@ -72,15 +73,82 @@ export function setupThemeToggles(): void {
   if (!toggles.length) return;
 
   toggles.forEach((toggle) => {
-    toggle.addEventListener("click", () => {
+    // prevent duplicate listeners when called multiple times
+    if (toggle.getAttribute("data-theme-bound") === "true") return;
+    toggle.setAttribute("data-theme-bound", "true");
+
+    toggle.addEventListener("click", (e) => {
       const nextIsLight = !root.classList.contains("theme-light");
       root.classList.toggle("theme-light", nextIsLight);
       try {
         localStorage.setItem(KEY, nextIsLight ? "light" : "dark");
+      } catch {}
+      try {
+        const target = (e.currentTarget as HTMLElement) || toggle;
+        console.info("[theme] Toggle clicked", {
+          targetId: target.id || null,
+          mode: nextIsLight ? "light" : "dark",
+        });
       } catch {}
       syncToggles();
     });
   });
 
   syncToggles();
+
+  // Observe future additions (e.g., after React re-renders or route changes)
+  if (!observerStarted && typeof MutationObserver !== "undefined") {
+    const bindIfNeeded = (el: Element) => {
+      if (el instanceof HTMLElement && el.matches("[data-theme-toggle]")) {
+        if (el.getAttribute("data-theme-bound") !== "true") {
+          el.setAttribute("data-theme-bound", "true");
+          el.addEventListener("click", (e) => {
+            const nextIsLight = !root.classList.contains("theme-light");
+            root.classList.toggle("theme-light", nextIsLight);
+            try {
+              localStorage.setItem(KEY, nextIsLight ? "light" : "dark");
+            } catch {}
+            try {
+              const target = (e.currentTarget as HTMLElement) || el;
+              console.info("[theme] Toggle clicked", {
+                targetId: target.id || null,
+                mode: nextIsLight ? "light" : "dark",
+              });
+            } catch {}
+            syncToggles();
+          });
+        }
+      }
+      const inner = el.querySelectorAll<HTMLElement>("[data-theme-toggle]");
+      inner.forEach((n) => {
+        if (n.getAttribute("data-theme-bound") !== "true") {
+          n.setAttribute("data-theme-bound", "true");
+          n.addEventListener("click", (e) => {
+            const nextIsLight = !root.classList.contains("theme-light");
+            root.classList.toggle("theme-light", nextIsLight);
+            try {
+              localStorage.setItem(KEY, nextIsLight ? "light" : "dark");
+            } catch {}
+            try {
+              const target = (e.currentTarget as HTMLElement) || n;
+              console.info("[theme] Toggle clicked", {
+                targetId: target.id || null,
+                mode: nextIsLight ? "light" : "dark",
+              });
+            } catch {}
+            syncToggles();
+          });
+        }
+      });
+    };
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        m.addedNodes.forEach((n) => {
+          if (n instanceof Element) bindIfNeeded(n);
+        });
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    observerStarted = true;
+  }
 }
