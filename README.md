@@ -133,3 +133,5 @@ Used to store files: industryDrawer.ts, testimonials.ts, and theme.ts for additi
 2) Evaluation and API simulation of sending message in "Ready to Start? Let’s Talk." Section
    a) Try sending a message with all the details filled in: name, email, and message. You'll receive a message respond in the dialog box: "Message received!"
    b) Try sending a message with the entire email address: failed@yahoo.com. You will then receive a message in the message box: "Oops! Something went wrong."
+
+3) I need a little revision in the files: package-lock.json, package.json, and vite.config.ts because it is needed to display the SVGR (SVG for React) file to display the response icon when the message is sent as requested in Figma design.
